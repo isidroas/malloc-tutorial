@@ -26,7 +26,7 @@ struct block_meta {
   int magic;    // For debugging only. TODO: remove this in non-debug mode.
 };
 
-#define META_SIZE sizeof(struct block_meta)
+#define META_SIZE sizeof(struct block_meta) // = 8 +8 +4 +4 =24 bytes
 
 void *global_base = NULL;
 
@@ -43,7 +43,7 @@ struct block_meta *find_free_block(struct block_meta **last, size_t size) {
 
 struct block_meta *request_space(struct block_meta* last, size_t size) {
   struct block_meta *block;
-  block = sbrk(0);
+  block = sbrk(0); //pa que hacer esto si ya lo obtienes en la siguiente?
   void *request = sbrk(size + META_SIZE);
   assert((void*)block == request); // Not thread safe.
   if (request == (void*) -1) {
@@ -83,7 +83,7 @@ void *malloc(size_t size) {
     if (!block) { // Failed to find free block.
       block = request_space(last, size);
       if (!block) {
-	return NULL;
+        return NULL;
       }
     } else {      // Found free block
       // TODO: consider splitting block here.
@@ -114,7 +114,7 @@ void free(void *ptr) {
 
   // TODO: consider merging blocks once splitting blocks is implemented.
   struct block_meta* block_ptr = get_block_ptr(ptr);
-  assert(block_ptr->free == 0);
+  assert(block_ptr->free == 0); // this fails with /bin/cat
   assert(block_ptr->magic == 0x77777777 || block_ptr->magic == 0x12345678);
   block_ptr->free = 1;
   block_ptr->magic = 0x55555555;  
