@@ -1,0 +1,21 @@
+diff --git a/malloc.c b/malloc.c
+--- a/malloc.c
++++ b/malloc.c
+@@ -86,7 +86,16 @@ void *malloc(size_t size) {
+ 	return NULL;
+       }
+     } else {      // Found free block
+-      // TODO: consider splitting block here.
++      if ((block->size - size) >  META_SIZE ){
++        // split block
++        struct block_meta *new_block = (void *)(block + 1) + size;
++        new_block->next = block->next;
++        new_block->free = 1;
++        new_block->magic = 0x66666666;
++        new_block->size = block->size - size -  META_SIZE;
++        block->size = size;
++        block->next = new_block;
++      }
+       block->free = 0;
+       block->magic = 0x77777777;
+     }
