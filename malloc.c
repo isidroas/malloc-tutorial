@@ -114,8 +114,8 @@ void free(void *ptr) {
 
   // TODO: consider merging blocks once splitting blocks is implemented.
   struct block_meta* block_ptr = get_block_ptr(ptr);
-  assert(block_ptr->free == 0); // this fails with /bin/cat
-  assert(block_ptr->magic == 0x77777777 || block_ptr->magic == 0x12345678);
+  assert(block_ptr->magic == 0x77777777 || block_ptr->magic == 0x12345678); // this fails if program uses aligned_alloc()
+  assert(block_ptr->free == 0);
   block_ptr->free = 1;
   block_ptr->magic = 0x55555555;  
 }
