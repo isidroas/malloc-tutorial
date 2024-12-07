@@ -157,7 +157,11 @@ void *realloc(void *ptr, size_t size) {
 
   struct block_meta* block_ptr = get_block_ptr(ptr);
   if (block_ptr->size >= size) {
-    // We have enough space. Could free some once we implement split. TODO
+    // We have enough space. Could free some
+    struct block_meta* new_block = split(block_ptr, size);
+    if (new_block){
+      merge_with_next(new_block);
+    }
     return ptr;
   }
 
