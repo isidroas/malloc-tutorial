@@ -64,11 +64,12 @@ struct block_meta *request_space(struct block_meta* last, size_t size) {
 
 
 struct block_meta * split(struct block_meta * block, size_t size){
-      if ((block->size - size) <=  META_SIZE ){
+      if ((block->size - size) <=  META_SIZE ){ // TODO: create variable with difference that below will be used?
         return NULL;
       }
       struct block_meta *new_block = (void *)(block + 1) + size;
       new_block->next = block->next;
+      new_block->prev = block;
       new_block->free = 1;
       new_block->magic = 0x66666666;
       new_block->size = block->size - size -  META_SIZE;
@@ -127,8 +128,11 @@ struct block_meta *get_block_ptr(void *ptr) {
 void merge_with_next(struct block_meta *block_ptr){
   struct block_meta * next = block_ptr->next;
   if ( next && next->free){
+    assert (next->prev == block_ptr);
     block_ptr->next = next->next;
     block_ptr->size += next->size + META_SIZE;
+    if (next->next)
+      next->next->prev = block_ptr;
     /* block_ptr == */
   }
 }
