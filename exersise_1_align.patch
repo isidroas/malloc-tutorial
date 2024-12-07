@@ -1,7 +1,7 @@
 diff --git a/malloc.c b/malloc.c
 --- a/malloc.c
 +++ b/malloc.c
-@@ -41,8 +41,20 @@ struct block_meta *find_free_block(struct block_meta **last, size_t size) {
+@@ -41,8 +41,21 @@ struct block_meta *find_free_block(struct block_meta **last, size_t size) {
    return current;
  }
  
@@ -17,7 +17,8 @@ diff --git a/malloc.c b/malloc.c
 +
  struct block_meta *request_space(struct block_meta* last, size_t size) {
    struct block_meta *block;
-+  // supossitions: initial sbrk(0) is aligned and metasize also
++  // supossitions: global_size and META_SIZE are also aligned
++  // TODO: assert that
 +  size = round_up_4_multiple(size);
    block = sbrk(0); //pa que hacer esto si ya lo obtienes en la siguiente?
    void *request = sbrk(size + META_SIZE);
