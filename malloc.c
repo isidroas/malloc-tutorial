@@ -62,6 +62,21 @@ struct block_meta *request_space(struct block_meta* last, size_t size) {
   return block;
 }
 
+
+struct block_meta * split(struct block_meta * block, size_t size){
+      if ((block->size - size) <=  META_SIZE ){
+        return NULL;
+      }
+      struct block_meta *new_block = (void *)(block + 1) + size;
+      new_block->next = block->next;
+      new_block->free = 1;
+      new_block->magic = 0x66666666;
+      new_block->size = block->size - size -  META_SIZE;
+      block->size = size;
+      block->next = new_block;
+      return new_block;
+}
+
 // If it's the first ever call, i.e., global_base == NULL, request_space and set global_base.
 // Otherwise, if we can find a free block, use it.
 // If not, request_space.
@@ -88,16 +103,7 @@ void *malloc(size_t size) {
         return NULL;
       }
     } else {      // Found free block
-      if ((block->size - size) >  META_SIZE ){
-        // split block
-        struct block_meta *new_block = (void *)(block + 1) + size;
-        new_block->next = block->next;
-        new_block->free = 1;
-        new_block->magic = 0x66666666;
-        new_block->size = block->size - size -  META_SIZE;
-        block->size = size;
-        block->next = new_block;
-      }
+      split(block, size);
       block->free = 0;
       block->magic = 0x77777777;
     }
