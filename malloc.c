@@ -22,6 +22,7 @@ void *nofree_malloc(size_t size) {
 struct block_meta {
   size_t size;
   struct block_meta *next;
+  struct block_meta *prev;
   int free;
   int magic;    // For debugging only. TODO: remove this in non-debug mode.
 };
@@ -53,6 +54,7 @@ struct block_meta *request_space(struct block_meta* last, size_t size) {
   if (last) { // NULL on first request.
     last->next = block;
   }
+  block->prev = last;
   block->size = size;
   block->next = NULL;
   block->free = 0;
@@ -86,7 +88,16 @@ void *malloc(size_t size) {
         return NULL;
       }
     } else {      // Found free block
-      // TODO: consider splitting block here.
+      if ((block->size - size) >  META_SIZE ){
+        // split block
+        struct block_meta *new_block = (void *)(block + 1) + size;
+        new_block->next = block->next;
+        new_block->free = 1;
+        new_block->magic = 0x66666666;
+        new_block->size = block->size - size -  META_SIZE;
+        block->size = size;
+        block->next = new_block;
+      }
       block->free = 0;
       block->magic = 0x77777777;
     }
@@ -107,6 +118,15 @@ struct block_meta *get_block_ptr(void *ptr) {
   return (struct block_meta*)ptr - 1;
 }
 
+void merge_with_next(struct block_meta *block_ptr){
+  struct block_meta * next = block_ptr->next;
+  if ( next && next->free){
+    block_ptr->next = next->next;
+    block_ptr->size += next->size + META_SIZE;
+    /* block_ptr == */
+  }
+}
+
 void free(void *ptr) {
   if (!ptr) {
     return;
@@ -118,6 +138,9 @@ void free(void *ptr) {
   assert(block_ptr->free == 0);
   block_ptr->free = 1;
   block_ptr->magic = 0x55555555;  
+  merge_with_next(block_ptr);
+  if (block_ptr-> prev)
+    merge_with_next(block_ptr->prev);
 }
 
 void *realloc(void *ptr, size_t size) {
