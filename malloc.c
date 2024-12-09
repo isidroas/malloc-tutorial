@@ -173,8 +173,8 @@ void *realloc(void *ptr, size_t size) {
   /*   // grow brk */
   if (block_ptr->next->free && (block_ptr->next->size + META_SIZE) >= (size-block_ptr->size)){ // TODO: negative overflow? -> no debido al if() previo de shrink
       merge_with_next(block_ptr);
+      split(block_ptr, size);
       return ptr;
-      /* split(block_ptr, size); */
   }
 
   // Need to really realloc. Malloc new space and free old space.

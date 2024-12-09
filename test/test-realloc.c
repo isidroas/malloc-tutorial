@@ -32,20 +32,20 @@ int main() {
   /* void *ptr1 = malloc(1); */
   /* realloc(ptr1, 2); */
 
-  // test merge. En realidad antes vendría el que tuviera espacio de sobra. Para que el student puede fallar posteriormente en el edge case
-  void *ptr1 = malloc(1);
-  void *ptr2 = malloc(1);
-  malloc(1);
-  free(ptr2);
-  ptr1 = realloc(ptr1, 1 + 32 +1); // should be merged with next
-
-  /* // test merge and split */
+  /* // test merge. En realidad antes vendría el que tuviera espacio de sobra. Para que el student puede fallar posteriormente en el edge case */
   /* void *ptr1 = malloc(1); */
-  /* void *ptr2 = malloc(2); */
+  /* void *ptr2 = malloc(1); */
   /* malloc(1); */
   /* free(ptr2); */
-  /* ptr1 = realloc(ptr1, 2); // should split the remaining after merging */
-  /* malloc(1); // it should fit peferctily in the split */
+  /* ptr1 = realloc(ptr1, 1 + 32 +1); // should be merged with next */
+
+  // test merge and split
+  void *ptr1 = malloc(1);
+  void *ptr2 = malloc(2);
+  malloc(1);
+  free(ptr2);
+  ptr1 = realloc(ptr1, 2); // should split the remaining after merging
+  malloc(1); // it should fit peferctily in the split
 
   return 0;
 }
