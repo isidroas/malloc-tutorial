@@ -28,9 +28,15 @@ int main() {
   /* ptr1 = realloc(ptr1, 1); // shrink => split */
   /* malloc(1); */
 
-  // remains the same. brk grows
-  void *ptr1 = malloc(1);
-  realloc(ptr1, 2);
+  /* // test do nothing. No me ha hecho falta, eliminar? */
+  /* void *ptr1 = malloc(34); // 32 + one extra for old and one for new */
+  /* malloc(1); */
+  /* ptr1 = realloc(ptr1, 34); // shrink => split */
+
+  /* // remains the same. brk grows */
+  /* void *ptr1 = malloc(1); */
+  /* realloc(ptr1, 2); */
+  /* malloc(1); */
 
   /* // test merge. En realidad antes vendría el que tuviera espacio de sobra. Para que el student puede fallar posteriormente en el edge case */
   /* void *ptr1 = malloc(1); */

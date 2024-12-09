@@ -175,7 +175,7 @@ void *realloc(void *ptr, size_t size) {
       block_ptr->size+= size- block_ptr->size;
       return ptr;
   }
-  else if (block_ptr->next->free && (block_ptr->next->size + META_SIZE) >= (size-block_ptr->size)){ // TODO: negative overflow? -> no debido al if() previo de shrink
+  else if (block_ptr->next->free && (block_ptr->next->size + META_SIZE) >= (size - block_ptr->size)){ // TODO: negative overflow? -> no debido al if() previo de shrink. Además podría evitarme la resta despejando y pasando al otro lado sumando
       merge_with_next(block_ptr);
       split(block_ptr, size);
       return ptr;
