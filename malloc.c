@@ -149,7 +149,7 @@ void free(void *ptr) {
   block_ptr->free = 1;
   block_ptr->magic = 0x55555555;  
   merge_with_next(block_ptr);
-  if (block_ptr-> prev)
+  if (block_ptr-> prev && block_ptr->prev->free)
     merge_with_next(block_ptr->prev);
 }
 
