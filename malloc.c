@@ -169,8 +169,11 @@ void *realloc(void *ptr, size_t size) {
     return ptr;
   }
 
+  // TODO: create variable grow size
   if(!block_ptr->next){
-    // grow brk
+      sbrk( size- block_ptr->size);
+      block_ptr->size+= size- block_ptr->size;
+      return ptr;
   }
   else if (block_ptr->next->free && (block_ptr->next->size + META_SIZE) >= (size-block_ptr->size)){ // TODO: negative overflow? -> no debido al if() previo de shrink
       merge_with_next(block_ptr);
