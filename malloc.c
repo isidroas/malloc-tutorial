@@ -171,7 +171,7 @@ void *realloc(void *ptr, size_t size) {
 
   /* if(!block_ptr->next) */
   /*   // grow brk */
-  if (block_ptr->next->free && (block_ptr->next->size + META_SIZE) > (size-block_ptr->size)){ // TODO: negative overflow? -> no debido al if() previo de shrink
+  if (block_ptr->next->free && (block_ptr->next->size + META_SIZE) >= (size-block_ptr->size)){ // TODO: negative overflow? -> no debido al if() previo de shrink
       merge_with_next(block_ptr);
       return ptr;
       /* split(block_ptr, size); */
